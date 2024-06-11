@@ -52,6 +52,7 @@ const config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        link: 'rgb(0, 112, 243)',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -71,6 +72,13 @@ const config = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+      },
+      height: {
+        'page-children-wrapper': 'calc(100vh - 64px)',
+      },
+      backgroundColor: {
+        github: 'rgb(36, 41, 46)',
+        discord: 'rgb(6, 88, 210)',
       },
     },
   },
