@@ -1,10 +1,14 @@
-import { Button } from '@/components/shadcn/button'
+import { WavyBackground } from '@/components/aceternity/wavy-background'
 
 const Home = () => {
   return (
     <main>
-      <p>Hello World!</p>
-      <Button>Shadc is Working!</Button>
+      <WavyBackground>
+        <div className="font-bold text-lg text-white">
+          <p>Hello World!</p>
+          <p>Shadcn/ui and Aceternity are working fine!</p>
+        </div>
+      </WavyBackground>
     </main>
   )
 }
