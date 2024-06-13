@@ -27,9 +27,6 @@ const PasswordForm: React.FC = () => {
 		const password = form.getValues().password
 		const confirmPassword = form.getValues().confirmPassword
 
-		console.log('password: ', password)
-		console.log('confirmPassword: ', confirmPassword)
-
 		const result = passwordSchema.safeParse({ password, confirmPassword })
 		if (!result.success) {
 			result.error.errors.forEach((error) => {

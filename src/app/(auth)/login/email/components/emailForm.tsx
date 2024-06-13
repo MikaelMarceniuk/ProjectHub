@@ -9,16 +9,18 @@ import {
 import { Input } from '@/components/shadcn/input'
 import { useMultistepFormContext } from '@/providers/useMultiStepFormProvider'
 import { useFormContext } from 'react-hook-form'
-import { SignUpSchemaType } from '../page'
 import { Button } from '@/components/shadcn/button'
 import { ArrowLeft, Mail } from 'lucide-react'
 import { z } from 'zod'
+import ContentWrapper from '../../_components/contentWrapper'
+import Link from 'next/link'
+import { emailLoginSchemaType } from '../page'
 
 const emailFormSchema = z.string().email()
 
 const EmailForm: React.FC = () => {
-	const { next, back } = useMultistepFormContext()
-	const form = useFormContext<SignUpSchemaType>()
+	const { next } = useMultistepFormContext()
+	const form = useFormContext<emailLoginSchemaType>()
 
 	const handleContinueClick = () => {
 		const result = emailFormSchema.safeParse(form.getValues().email)
@@ -34,9 +36,9 @@ const EmailForm: React.FC = () => {
 	}
 
 	return (
-		<div className='mt-40 flex w-80 flex-1 flex-col'>
+		<ContentWrapper>
 			<h1 className='mb-10 text-center text-3xl font-bold'>
-				Sign up for Project Hub
+				Log in to Project Hub
 			</h1>
 			<div className='flex flex-col gap-2'>
 				<FormField
@@ -69,12 +71,11 @@ const EmailForm: React.FC = () => {
 					Icon={ArrowLeft}
 					iconPlacement='left'
 					className='flex gap-2 text-link after:bg-link'
-					onClick={back}
 				>
-					Other Sign Up options
+					<Link href='/login'>Other Log In options</Link>
 				</Button>
 			</div>
-		</div>
+		</ContentWrapper>
 	)
 }
 

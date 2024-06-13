@@ -9,46 +9,52 @@ import {
 import { Input } from '@/components/shadcn/input'
 import { useMultistepFormContext } from '@/providers/useMultiStepFormProvider'
 import { useFormContext } from 'react-hook-form'
-import { SignUpSchemaType } from '../page'
 import { Button } from '@/components/shadcn/button'
-import { ArrowLeft, Mail } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { z } from 'zod'
+import { emailLoginSchemaType } from '../page'
 
-const emailFormSchema = z.string().email()
+const passwordSchema = z.object({
+	password: z.string().min(1),
+})
 
-const EmailForm: React.FC = () => {
+const PasswordForm: React.FC = () => {
 	const { next, back } = useMultistepFormContext()
-	const form = useFormContext<SignUpSchemaType>()
+	const form = useFormContext<emailLoginSchemaType>()
 
 	const handleContinueClick = () => {
-		const result = emailFormSchema.safeParse(form.getValues().email)
+		const password = form.getValues().password
 
-		if (result.success) {
-			form.clearErrors('email')
-			return next()
+		const result = passwordSchema.safeParse({ password })
+		if (!result.success) {
+			result.error.errors.forEach((error) => {
+				if (error.code == 'too_small') {
+					return form.setError(error.path[0], {
+						message: 'Password must not be empty.',
+					})
+				}
+			})
 		}
 
-		form.setError('email', {
-			message: 'Inform a valid email.',
-		})
+		form.clearErrors('password')
+		next()
 	}
 
 	return (
 		<div className='mt-40 flex w-80 flex-1 flex-col'>
 			<h1 className='mb-10 text-center text-3xl font-bold'>
-				Sign up for Project Hub
+				Now insert your password
 			</h1>
 			<div className='flex flex-col gap-2'>
 				<FormField
 					control={form.control}
-					name='email'
+					name='password'
 					render={({ field }) => (
 						<FormItem>
 							<FormControl>
 								<Input
-									placeholder='Your email'
-									type='email'
-									minLength={0}
+									placeholder='Your password'
+									type='password'
 									className='h-12'
 									{...field}
 								/>
@@ -58,10 +64,7 @@ const EmailForm: React.FC = () => {
 					)}
 				/>
 				<Button size='xlg' onClick={handleContinueClick} type='button'>
-					<div className='flex gap-2'>
-						<Mail size={20} />
-						Continue with Email
-					</div>
+					Continue
 				</Button>
 				<Button
 					size='xlg'
@@ -71,11 +74,11 @@ const EmailForm: React.FC = () => {
 					className='flex gap-2 text-link after:bg-link'
 					onClick={back}
 				>
-					Other Sign Up options
+					Go back to email
 				</Button>
 			</div>
 		</div>
 	)
 }
 
-export default EmailForm
+export default PasswordForm
