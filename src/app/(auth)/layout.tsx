@@ -1,9 +1,9 @@
 import withChildren from '@/@types/withChildren'
-import { Button } from '@/components/shadcn/button'
 import { ThemeToggle } from '@/components/shadcn/theme-toggle'
 import { Github, Kanban } from 'lucide-react'
 import { NextPage } from 'next'
 import Link from 'next/link'
+import Navbar from './components/navbar'
 
 type AuthProps = withChildren
 
@@ -17,9 +17,7 @@ const AuthLayout: NextPage<AuthProps> = ({ children }) => {
             <span>Project Hub</span>
           </div>
         </Link>
-        <nav>
-          <Button variant="outline">Sign Up</Button>
-        </nav>
+        <Navbar />
       </header>
       <main className="h-page-children-wrapper">{children}</main>
       <footer className="h-20 px-6 py-7 flex justify-between items-center">

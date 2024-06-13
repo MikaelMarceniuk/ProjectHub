@@ -40,7 +40,7 @@ const LoginPage: NextPage = () => {
 
   return (
     <div className="h-full flex flex-col items-center">
-      <div className="flex flex-col flex-1 justify-center">
+      <div className="flex flex-col flex-1 mt-40">
         <h1 className="text-center text-3xl font-bold mb-10">
           Log in to Project Hub
         </h1>
