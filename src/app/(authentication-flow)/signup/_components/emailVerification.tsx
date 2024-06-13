@@ -1,6 +1,6 @@
 'use client'
 
-import { useMultistepFormContext } from '@/providers/useMultiStepFormProvider'
+import { useMultistepFormContext } from '@/providers/multiStepFormProvider'
 import { useFormContext } from 'react-hook-form'
 import { SignUpSchemaType } from '../page'
 import { OtpStyledInput } from '@/components/shadcn/opt-input'

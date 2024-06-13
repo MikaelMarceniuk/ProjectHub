@@ -3,7 +3,7 @@
 import useMultistepForm from '@/hooks/useMultistepform'
 import { NextPage } from 'next'
 import EmailForm from './components/emailForm'
-import MultistepFormProvider from '@/providers/useMultiStepFormProvider'
+import MultistepFormProvider from '@/providers/multiStepFormProvider'
 import { Form } from '@/components/shadcn/form'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'

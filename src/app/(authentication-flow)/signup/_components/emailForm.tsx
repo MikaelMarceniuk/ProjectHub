@@ -7,7 +7,7 @@ import {
 	FormMessage,
 } from '@/components/shadcn/form'
 import { Input } from '@/components/shadcn/input'
-import { useMultistepFormContext } from '@/providers/useMultiStepFormProvider'
+import { useMultistepFormContext } from '@/providers/multiStepFormProvider'
 import { useFormContext } from 'react-hook-form'
 import { SignUpSchemaType } from '../page'
 import { Button } from '@/components/shadcn/button'

@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/shadcn/button'
-import { useMultistepFormContext } from '@/providers/useMultiStepFormProvider'
+import { useMultistepFormContext } from '@/providers/multiStepFormProvider'
 import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect } from 'react'
