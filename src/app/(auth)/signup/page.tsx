@@ -2,15 +2,15 @@
 
 import useMultiStepForm from '@/hooks/useMultistepform'
 import { NextPage } from 'next'
-import ConnectToProviderForm from './components/connectToProviderForm'
-import EmailForm from './components/emailForm'
+import ConnectToProviderForm from './_components/connectToProviderForm'
+import EmailForm from './_components/emailForm'
 import MultistepFormProvider from '@/providers/useMultiStepFormProvider'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import PasswordForm from './components/passwordForm'
+import PasswordForm from './_components/passwordForm'
 import { Form } from '@/components/shadcn/form'
-import EmailVerification from './components/emailVerification'
+import EmailVerification from './_components/emailVerification'
 
 const signUpSchema = z.object({
 	email: z.string().email(),

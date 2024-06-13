@@ -75,6 +75,7 @@ const NoAccountLoginPage: NextPage = () => {
 							Icon={ArrowLeft}
 							iconPlacement='left'
 							className='flex gap-2 text-link after:bg-link'
+							type='button'
 						>
 							<Link href='/login'>Other Log In options</Link>
 						</Button>

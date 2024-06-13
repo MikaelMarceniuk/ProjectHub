@@ -3,7 +3,7 @@ import { ThemeToggle } from '@/components/shadcn/theme-toggle'
 import { Github, Kanban } from 'lucide-react'
 import { NextPage } from 'next'
 import Link from 'next/link'
-import Navbar from './components/navbar'
+import Navbar from './_components/navbar'
 
 type AuthProps = withChildren
 
