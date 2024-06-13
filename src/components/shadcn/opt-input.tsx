@@ -6,25 +6,25 @@ import OtpInput, { OTPInputProps } from 'react-otp-input'
 type OtpOptions = Omit<OTPInputProps, 'renderInput'>
 
 type OtpStyledInputProps = {
-  className?: string
+	className?: string
 } & OtpOptions
 
 export const OtpStyledInput = ({
-  className,
-  ...props
+	className,
+	...props
 }: OtpStyledInputProps) => {
-  return (
-    <OtpInput
-      {...props}
-      renderInput={(inputProps) => (
-        <Input
-          {...inputProps}
-          className={cn('!w-12 !appearance-none selection:bg-none ', className)}
-        />
-      )}
-      containerStyle={`flex justify-center items-center flex-wrap  text-2xl font-bold ${
-        props.renderSeparator ? 'gap-1' : 'gap-x-3 gap-y-2'
-      }`}
-    />
-  )
+	return (
+		<OtpInput
+			{...props}
+			renderInput={(inputProps) => (
+				<Input
+					{...inputProps}
+					className={cn('!w-12 !appearance-none selection:bg-none', className)}
+				/>
+			)}
+			containerStyle={`flex justify-center items-center flex-wrap  text-2xl font-bold ${
+				props.renderSeparator ? 'gap-1' : 'gap-x-3 gap-y-2'
+			}`}
+		/>
+	)
 }

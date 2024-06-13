@@ -1,5 +1,5 @@
 type withChildren = {
-  children: React.ReactNode
+	children: React.ReactNode
 }
 
 export default withChildren
