@@ -16,7 +16,7 @@ import { Input } from '@/components/shadcn/input'
 import { Button } from '@/components/shadcn/button'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useUserContext } from '@/providers/userProvider'
 
 const noAccountLoginSchema = z.object({
 	username: z.string().min(3),
@@ -25,7 +25,7 @@ const noAccountLoginSchema = z.object({
 type noAccountLoginSchemaType = z.infer<typeof noAccountLoginSchema>
 
 const NoAccountLoginPage: NextPage = () => {
-	const router = useRouter()
+	const { logIn } = useUserContext()
 	const methods = useForm<noAccountLoginSchemaType>({
 		resolver: zodResolver(noAccountLoginSchema),
 		defaultValues: {
@@ -34,14 +34,10 @@ const NoAccountLoginPage: NextPage = () => {
 	})
 
 	const onSubmit = (values: noAccountLoginSchemaType) => {
-		localStorage.clear()
-
-		const newLocaldata = {
-			user: values.username,
-		}
-
-		localStorage.setItem('@project-hub/v1.0', JSON.stringify(newLocaldata))
-		router.push('/dashboard')
+		logIn({
+			type: 'NO_ACCOUNT',
+			username: values.username,
+		})
 	}
 
 	return (
