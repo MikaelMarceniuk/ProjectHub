@@ -1,6 +1,6 @@
 'use client'
 
-import getUserProject from '@/api/getUserProject'
+import getProjectByUser from '@/api/getProjectByUser'
 import { Button } from '@/components/shadcn/button'
 import { Card, CardHeader } from '@/components/shadcn/card'
 import {
@@ -21,8 +21,16 @@ const ProjectsList: React.FC = () => {
 
 	const { isFetching, data } = useQuery({
 		queryKey: ['projects', { query: searchParams.get('query') }],
-		queryFn: async () => await (await getUserProject(session?.user.id)).data,
+		queryFn: async () =>
+			await (
+				await getProjectByUser({
+					userId: session?.user.id,
+					query: searchParams.get('query'),
+				})
+			).data,
 	})
+
+	// TODO Create Skeleton and debounce for fetching
 
 	return (
 		<ul className='mt-4 flex flex-wrap gap-4'>
