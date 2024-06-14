@@ -27,7 +27,10 @@ const UserProvider: React.FC<withChildren> = ({ children }) => {
 
 	useEffect(() => {
 		const appLocaldata = localStorage.getItem('@project-hub/v1.0')
-		appLocaldata != null && setUser(JSON.parse(appLocaldata))
+		if (appLocaldata == null) return
+
+		const { type, username } = JSON.parse(appLocaldata)
+		setUser({ type, username })
 	}, [])
 
 	const logIn = (user: noAccountUser) => {
