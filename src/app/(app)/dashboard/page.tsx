@@ -1,6 +1,7 @@
 import { NextPage } from 'next'
 import SearchProjectAndTask from './_component/searchProjectAndTask'
 import CreateProject from './_component/createProject'
+import ProjectsList from './_component/projectsList'
 
 const DashboardPage: NextPage = () => {
 	return (
@@ -17,7 +18,7 @@ const DashboardPage: NextPage = () => {
 
 				<div className='w-full'>
 					<span>Projects</span>
-					<ul></ul>
+					<ProjectsList />
 				</div>
 			</div>
 		</div>

@@ -36,7 +36,10 @@ const UserProvider: React.FC<withChildren> = ({ children }) => {
 	const logIn = (user: noAccountUser) => {
 		if (user.type == 'NO_ACCOUNT') {
 			localStorage.clear()
-			localStorage.setItem('@project-hub/v1.0', JSON.stringify(user))
+			localStorage.setItem(
+				'@project-hub/v1.0',
+				JSON.stringify({ ...user, projects: [] }),
+			)
 			setUser(user)
 		}
 

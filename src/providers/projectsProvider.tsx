@@ -27,25 +27,32 @@ const ProjectsProvider: React.FC<withChildren> = ({ children }) => {
 		setProjects(projects)
 	}, [])
 
-	useEffect(() => {
-		const appLocaldata = localStorage.getItem('@project-hub/v1.0')
-		if (appLocaldata == null) return
-
-		const updatedLocalData = JSON.parse(appLocaldata)
-		updatedLocalData.projects = projects
-
-		localStorage.setItem('@project-hub/v1.0', JSON.stringify(updatedLocalData))
-	}, [projects])
-
 	const createNewProject = (name: string) => {
 		const newProject = {
 			id: crypto.randomBytes(20).toString('hex'),
 			name,
 		}
 
-		setProjects((oldValue) =>
-			oldValue ? [...oldValue, newProject] : [newProject],
-		)
+		const appLocaldata = localStorage.getItem('@project-hub/v1.0')
+		if (appLocaldata == null) {
+			return alert('Error: No local data found when saving project.')
+		}
+
+		setProjects((oldValue) => {
+			const newProjectsArray = oldValue
+				? [...oldValue, newProject]
+				: [newProject]
+
+			const updatedLocalData = JSON.parse(appLocaldata)
+			updatedLocalData.projects = newProjectsArray
+
+			localStorage.setItem(
+				'@project-hub/v1.0',
+				JSON.stringify(updatedLocalData),
+			)
+
+			return newProjectsArray
+		})
 	}
 
 	return (
