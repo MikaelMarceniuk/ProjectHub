@@ -18,7 +18,7 @@ export const UserSchema = pgTable(
 		providerName: varchar('provider_name').notNull(),
 	},
 	(user) => ({
-		uniqueIdx: uniqueIndex('uniqueIdx').on(user.email),
+		uniqueIdx: uniqueIndex('uniqueIdx').on(user.providerId),
 	}),
 )
 

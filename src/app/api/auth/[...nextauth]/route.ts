@@ -1,3 +1,5 @@
+import createUserApi from '@/api/createUser'
+import getUserByProviderId from '@/api/getUserByProviderId'
 import db from '@/db'
 import { UserSchema } from '@/db/schema'
 import NextAuth from 'next-auth'
@@ -23,20 +25,18 @@ const handler = NextAuth({
 	},
 	callbacks: {
 		async signIn({ user, account }) {
-			try {
-				await db.insert(UserSchema).values({
-					username: user.name,
-					email: user.email,
-					image: user.image,
-					providerId: account?.type,
-					providerName: account?.provider,
-				})
+			const dbUser = await getUserByProviderId(account?.providerAccountId)
 
-				return true
-			} catch (e) {
-				console.log('SignIn/Error: ', e)
-				return false
-			}
+			if (!dbUser.success) return false
+			if (dbUser.data?.length == 1) return true
+
+			await createUserApi({
+				username: user.name!,
+				email: user.email!,
+				image: user.image!,
+				providerId: account?.providerAccountId!,
+				providerName: account?.provider!,
+			})
 		},
 	},
 })
