@@ -18,7 +18,7 @@ const DashboardPage: NextPage = () => {
 
 				<div className='w-full'>
 					<span>Projects</span>
-					<ProjectsList />
+					{/* <ProjectsList /> */}
 				</div>
 			</div>
 		</div>

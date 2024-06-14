@@ -1,47 +1,13 @@
 'use client'
 
-import { Button } from '@/components/shadcn/button'
-import { Separator } from '@/components/shadcn/separator'
 import { NextPage } from 'next'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
+import { Button } from '@/components/shadcn/button'
+import { Separator } from '@/components/shadcn/separator'
 import ContentWrapper from './_components/contentWrapper'
 
-enum EAvailableSignIn {
-	GITHUB = 'GITHUB',
-	DISCORD = 'DISCORD',
-	EMAIL_AND_PASSWORD = 'EMAIL_AND_PASSWORD',
-	NO_ACCOUNT = 'NO_ACCOUNT',
-}
-
 const LoginPage: NextPage = () => {
-	const router = useRouter()
-
-	const handleSignIn = (key: keyof typeof EAvailableSignIn) => () => {
-		console.log('handleSignIn/' + key)
-		switch (key) {
-			case 'GITHUB': {
-				console.log('Loggin in with', key)
-				break
-			}
-
-			case 'DISCORD': {
-				console.log('Loggin in with', key)
-				break
-			}
-
-			case 'EMAIL_AND_PASSWORD': {
-				router.push('/login/email')
-				break
-			}
-
-			case 'NO_ACCOUNT': {
-				router.push('/login/no-account')
-				break
-			}
-		}
-	}
-
 	return (
 		<ContentWrapper>
 			<h1 className='mb-10 text-center text-3xl font-bold'>
@@ -51,7 +17,7 @@ const LoginPage: NextPage = () => {
 				<Button
 					size='xlg'
 					className='flex gap-2 bg-github hover:bg-github/90 dark:text-white'
-					onClick={handleSignIn('GITHUB')}
+					onClick={() => signIn('github')}
 				>
 					<Image
 						src='/github-mark-white.svg'
@@ -64,7 +30,7 @@ const LoginPage: NextPage = () => {
 				<Button
 					size='xlg'
 					className='flex gap-2 bg-discord hover:bg-discord/90 dark:text-white'
-					onClick={handleSignIn('DISCORD')}
+					onClick={() => signIn('discord')}
 				>
 					<Image
 						src='/discord-mark-white.svg'
@@ -75,19 +41,8 @@ const LoginPage: NextPage = () => {
 					Continue with Discord
 				</Button>
 				<Separator className='my-2' />
-				<Button
-					size='xlg'
-					variant='outline'
-					onClick={handleSignIn('EMAIL_AND_PASSWORD')}
-				>
+				<Button size='xlg' variant='outline'>
 					Continue with Email
-				</Button>
-				<Button
-					size='xlg'
-					variant='outline'
-					onClick={handleSignIn('NO_ACCOUNT')}
-				>
-					Continue without account
 				</Button>
 			</div>
 		</ContentWrapper>

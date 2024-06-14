@@ -2,7 +2,8 @@ import type { Metadata, NextPage } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/providers/theme-provider'
-import UserProvider from '@/providers/userProvider'
+import SessionProvider from '@/providers/sessionProvider'
+import SessionObserver from '@/providers/sessionObserver'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,7 +25,10 @@ const RootLayout: NextPage<RootLayoutProps> = ({ children }) => {
 					enableSystem
 					disableTransitionOnChange
 				>
-					<UserProvider>{children}</UserProvider>
+					<SessionProvider>
+						<SessionObserver />
+						{children}
+					</SessionProvider>
 				</ThemeProvider>
 			</body>
 		</html>

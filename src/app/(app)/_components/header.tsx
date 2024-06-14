@@ -1,9 +1,9 @@
 'use client'
 
+import { useSession, signOut } from 'next-auth/react'
+import { Bell, LogOut } from 'lucide-react'
 import { Button } from '@/components/shadcn/button'
 import DefaultHeader from '@/components/defaultHeader'
-import { useUserContext } from '@/providers/userProvider'
-import Avatar from '@/components/avatar'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -11,10 +11,20 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/shadcn/dropdown-menu'
-import { Bell, LogOut } from 'lucide-react'
+import { Avatar, AvatarImage } from '@/components/shadcn/avatar'
+import { useRouter } from 'next/navigation'
 
 const Header: React.FC = () => {
-	const { user, logOut } = useUserContext()
+	const router = useRouter()
+	const { data: session, status } = useSession()
+
+	const handleSignOut = async () => {
+		await signOut({ redirect: false })
+		router.replace('/login')
+	}
+
+	// TODO Create Skeleton
+	if (status != 'authenticated') return null
 
 	return (
 		<DefaultHeader>
@@ -24,17 +34,19 @@ const Header: React.FC = () => {
 				</Button>
 				<DropdownMenu>
 					<DropdownMenuTrigger>
-						<Avatar />
+						<Avatar>
+							<AvatarImage src={session.user?.image} />
+						</Avatar>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
-						<DropdownMenuLabel>{user?.username}</DropdownMenuLabel>
+						<DropdownMenuLabel>{session.user?.name}</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<Button
 							variant='destructiveExpandIcon'
 							Icon={LogOut}
 							iconPlacement='right'
 							className='w-full'
-							onClick={logOut}
+							onClick={handleSignOut}
 						>
 							Log Out
 						</Button>
