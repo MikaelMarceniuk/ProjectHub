@@ -35,7 +35,8 @@ const Header: React.FC = () => {
 				<DropdownMenu>
 					<DropdownMenuTrigger>
 						<Avatar>
-							<AvatarImage src={session.user?.image} />
+							{/* TODO Solve this problem */}
+							<AvatarImage src={session.user?.image || ''} />
 						</Avatar>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>

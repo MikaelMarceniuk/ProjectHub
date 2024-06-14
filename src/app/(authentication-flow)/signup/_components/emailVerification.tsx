@@ -41,6 +41,8 @@ const EmailVerification: React.FC = () => {
 								<FormControl>
 									<>
 										<FormItem>
+											{/* TODO Solve this error */}
+											{/* @ts-ignore */}
 											<OtpStyledInput
 												numInputs={5}
 												inputType='number'

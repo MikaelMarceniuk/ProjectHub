@@ -31,6 +31,8 @@ const PasswordForm: React.FC = () => {
 		if (!result.success) {
 			result.error.errors.forEach((error) => {
 				if (error.code == 'too_small') {
+					// TODO Solve this error
+					// @ts-ignorex
 					return form.setError(error.path[0], {
 						message: 'Password must not be empty.',
 					})

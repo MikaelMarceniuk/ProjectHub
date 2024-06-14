@@ -3,6 +3,8 @@ import SearchProjectAndTask from './_component/searchProjectAndTask'
 import CreateProject from './_component/createProject'
 import ProjectsList from './_component/projectsList'
 
+// TODO Add a Suspense Tag and Create a Skeleton for this page
+
 const DashboardPage: NextPage = () => {
 	return (
 		<div className='mt-4 flex h-full flex-col gap-8 px-9 py-2'>
