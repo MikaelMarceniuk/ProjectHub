@@ -13,11 +13,11 @@ import { Ellipsis, Star } from 'lucide-react'
 import Avatar from 'react-avatar'
 
 const ProjectsList: React.FC = () => {
-	const { projects } = useProjectContext()
+	const { getProjects } = useProjectContext()
 
 	return (
 		<ul className='mt-4 flex flex-wrap gap-4'>
-			{projects.map((project) => (
+			{getProjects().map((project) => (
 				<Card
 					key={project.id}
 					className='w-full max-w-80 cursor-pointer transition-all hover:border-white/90'

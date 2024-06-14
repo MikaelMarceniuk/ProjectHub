@@ -4,9 +4,10 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import crypto from 'crypto'
 import withChildren from '@/@types/withChildren'
 import ProjectType from '@/@types/project'
+import { useSearchParams } from 'next/navigation'
 
 type ProjectContextType = {
-	projects: ProjectType[]
+	getProjects: () => ProjectType[]
 	createNewProject: (name: string) => void
 }
 
@@ -17,6 +18,7 @@ const ProjectContext = createContext<ProjectContextType>(
 export const useProjectContext = () => useContext(ProjectContext)
 
 const ProjectsProvider: React.FC<withChildren> = ({ children }) => {
+	const searchParams = useSearchParams()
 	const [projects, setProjects] = useState<ProjectType[]>([])
 
 	useEffect(() => {
@@ -26,6 +28,13 @@ const ProjectsProvider: React.FC<withChildren> = ({ children }) => {
 		const { projects } = JSON.parse(appLocaldata)
 		setProjects(projects)
 	}, [])
+
+	const getProjects = () => {
+		const query = searchParams.get('query')
+		if (!query) return projects
+
+		return projects.filter((p) => p.name.includes(query))
+	}
 
 	const createNewProject = (name: string) => {
 		const newProject = {
@@ -56,7 +65,7 @@ const ProjectsProvider: React.FC<withChildren> = ({ children }) => {
 	}
 
 	return (
-		<ProjectContext.Provider value={{ projects, createNewProject }}>
+		<ProjectContext.Provider value={{ getProjects, createNewProject }}>
 			{children}
 		</ProjectContext.Provider>
 	)
