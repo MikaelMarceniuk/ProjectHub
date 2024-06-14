@@ -38,6 +38,20 @@ const handler = NextAuth({
 				providerName: account?.provider!,
 			})
 		},
+		async jwt({ token, account, profile }) {
+			const dbUser = await getUserByProviderId(token.sub)
+			if (dbUser.success && dbUser.data?.length > 0) {
+				token.userId = dbUser.data[0].id
+			}
+
+			return token
+		},
+		async session({ session, token }) {
+			session.user.providerId = token.sub
+			session.user.id = token.userId
+
+			return session
+		},
 	},
 })
 

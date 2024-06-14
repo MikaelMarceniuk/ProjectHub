@@ -4,6 +4,7 @@ import './globals.css'
 import { ThemeProvider } from '@/providers/theme-provider'
 import SessionProvider from '@/providers/sessionProvider'
 import SessionObserver from '@/providers/sessionObserver'
+import QueryClientProvider from '@/providers/queryClientProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -27,7 +28,7 @@ const RootLayout: NextPage<RootLayoutProps> = ({ children }) => {
 				>
 					<SessionProvider>
 						<SessionObserver />
-						{children}
+						<QueryClientProvider>{children}</QueryClientProvider>
 					</SessionProvider>
 				</ThemeProvider>
 			</body>

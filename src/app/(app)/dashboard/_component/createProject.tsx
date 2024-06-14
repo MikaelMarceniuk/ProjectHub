@@ -1,5 +1,6 @@
 'use client'
 
+import createProjectApi from '@/api/createProject'
 import { Button } from '@/components/shadcn/button'
 import {
 	Dialog,
@@ -18,8 +19,9 @@ import {
 	FormMessage,
 } from '@/components/shadcn/form'
 import { Input } from '@/components/shadcn/input'
-import { useProjectContext } from '@/providers/projectsProvider'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -31,7 +33,8 @@ const newProjectSchema = z.object({
 type newProjectSchemaType = z.infer<typeof newProjectSchema>
 
 const CreateProject = () => {
-	const { createNewProject } = useProjectContext()
+	const { data: session } = useSession()
+	const queryClient = useQueryClient()
 
 	const newProjectForm = useForm<newProjectSchemaType>({
 		resolver: zodResolver(newProjectSchema),
@@ -40,12 +43,27 @@ const CreateProject = () => {
 		},
 	})
 
+	const createProjectMutation = useMutation({
+		mutationFn: createProjectApi,
+		onSuccess({ isSuccess, data }, variables, context) {
+			if (!isSuccess) return
+
+			const projectsInCache = queryClient.getQueriesData({
+				queryKey: ['projects', { query: '' }],
+			})
+			if (projectsInCache.length == 0) return
+
+			const [cacheKey, cache] = projectsInCache[0]
+			queryClient.setQueryData(cacheKey, [...cache, data[0]])
+		},
+	})
+
 	useEffect(() => {
 		if (newProjectForm.formState.isSubmitSuccessful) newProjectForm.reset()
 	}, [newProjectForm.formState.isSubmitSuccessful])
 
-	const handleCreateNewProject = ({ name }: newProjectSchemaType) => {
-		createNewProject(name)
+	const handleCreateNewProject = async ({ name }: newProjectSchemaType) => {
+		await createProjectMutation.mutate({ name, userId: session?.user.id })
 	}
 
 	return (
