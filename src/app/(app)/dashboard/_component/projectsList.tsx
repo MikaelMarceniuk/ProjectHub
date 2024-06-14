@@ -20,7 +20,7 @@ const ProjectsList: React.FC = () => {
 			{getProjects().map((project) => (
 				<Card
 					key={project.id}
-					className='w-full max-w-80 cursor-pointer transition-all hover:border-white/90'
+					className='w-full max-w-80 cursor-pointer transition-all hover:border-black/90 dark:hover:border-white/90'
 				>
 					<CardHeader className='flex flex-row justify-between'>
 						<div className='flex flex-row items-center gap-4'>
