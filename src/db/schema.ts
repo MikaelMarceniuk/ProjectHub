@@ -4,6 +4,7 @@ import {
 	timestamp,
 	uniqueIndex,
 	uuid,
+	integer,
 } from 'drizzle-orm/pg-core'
 
 export const UserSchema = pgTable(
@@ -27,4 +28,11 @@ export const ProjectSchema = pgTable('project', {
 	name: varchar('username').notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	ownerId: uuid('owner_id').references(() => UserSchema.id),
+})
+
+export const ColumnSchema = pgTable('column', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	name: varchar('name').notNull(),
+	order: integer('order').notNull(),
+	projectId: uuid('project_id').references(() => ProjectSchema.id),
 })
