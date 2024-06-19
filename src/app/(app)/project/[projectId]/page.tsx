@@ -3,6 +3,7 @@ import { Button } from '@/components/shadcn/button'
 import { Plus, Settings } from 'lucide-react'
 import { NextPage } from 'next'
 import { redirect } from 'next/navigation'
+import CardSheet from './_components/cardSheet'
 
 type ProjectPageType = {
 	params: {
@@ -29,9 +30,7 @@ const ProjectPage: NextPage<ProjectPageType> = async ({ params }) => {
 							<div>
 								<span className='text-lg font-bold uppercase'>{c.name}</span>
 							</div>
-							<Button size='icon' variant='ghost'>
-								<Plus />
-							</Button>
+							<CardSheet type='CREATE' />
 						</div>
 						<li></li>
 					</ul>
