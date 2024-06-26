@@ -4,6 +4,7 @@ import { Plus, Settings } from 'lucide-react'
 import { NextPage } from 'next'
 import { redirect } from 'next/navigation'
 import CardSheet from './_components/cardSheet'
+import ProjectColumn from './_components/projectColumn'
 
 type ProjectPageType = {
 	params: {
@@ -25,15 +26,7 @@ const ProjectPage: NextPage<ProjectPageType> = async ({ params }) => {
 			</div>
 			<div className='flex gap-14 p-8'>
 				{apiProject.data?.project.columns.map((c) => (
-					<ul key={c.id} className='w-full'>
-						<div className='flex items-center justify-between'>
-							<div>
-								<span className='text-lg font-bold uppercase'>{c.name}</span>
-							</div>
-							<CardSheet type='CREATE' columnId={c.id} />
-						</div>
-						<li></li>
-					</ul>
+					<ProjectColumn key={c.id} {...c} />
 				))}
 			</div>
 		</div>
