@@ -27,6 +27,8 @@ import StarterKit from '@tiptap/starter-kit'
 import { cx } from 'class-variance-authority'
 import { useEditor } from '@tiptap/react'
 import TiptapToolbar from '@/components/tiptap/toolbar'
+import { Popover, PopoverTrigger } from '@/components/shadcn/popover'
+import DatePicker from '@/components/shadcn/datePicker'
 
 type CardSheetCreateParams = {
 	type: 'CREATE'
@@ -38,7 +40,7 @@ type CardSheetParams = CardSheetCreateParams
 const CardFormSchema = z.object({
 	name: z.string().min(6),
 	description: z.string().min(0),
-	dueTo: z.string().date(),
+	dueTo: z.date(),
 	assinedTo: z.string(),
 })
 
@@ -99,10 +101,14 @@ const CardSheet: React.FC<CardSheetParams> = ({ type }) => {
 								control={methods.control}
 								name='dueTo'
 								render={({ field }) => (
-									<FormItem>
+									<FormItem className='flex flex-col justify-end'>
 										<FormLabel>Due to</FormLabel>
 										<FormControl>
-											<Input className='h-12' {...field} />
+											<DatePicker
+												value={field.value}
+												handleOnSetDate={field.onChange}
+												classname='h-12 w-56'
+											/>
 										</FormControl>
 										<FormMessage />
 									</FormItem>
