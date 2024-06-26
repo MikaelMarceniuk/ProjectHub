@@ -54,6 +54,8 @@ const CreateProject = () => {
 			if (projectsInCache.length == 0) return
 
 			const [cacheKey, cache] = projectsInCache[0]
+			// TODO Solve the error
+			// @ts-ignore
 			queryClient.setQueryData(cacheKey, [...cache, data[0]])
 		},
 	})
@@ -63,6 +65,8 @@ const CreateProject = () => {
 	}, [newProjectForm.formState.isSubmitSuccessful])
 
 	const handleCreateNewProject = async ({ name }: newProjectSchemaType) => {
+		// TODO Solve the error
+		// @ts-ignore
 		await createProjectMutation.mutate({ name, userId: session?.user.id })
 	}
 

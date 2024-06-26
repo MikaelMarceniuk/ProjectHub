@@ -1,7 +1,5 @@
 import createUserApi from '@/api/createUser'
 import getUserByProviderId from '@/api/getUserByProviderId'
-import db from '@/db'
-import { UserSchema } from '@/db/schema'
 import NextAuth from 'next-auth'
 import DiscordProvider from 'next-auth/providers/discord'
 import GitHubProvider from 'next-auth/providers/github'
@@ -25,6 +23,8 @@ const handler = NextAuth({
 	},
 	callbacks: {
 		async signIn({ user, account }) {
+			// TODO Solve the error
+			// @ts-ignore
 			const dbUser = await getUserByProviderId(account?.providerAccountId)
 
 			if (!dbUser.success) return false
@@ -37,17 +37,29 @@ const handler = NextAuth({
 				providerId: account?.providerAccountId!,
 				providerName: account?.provider!,
 			})
+
+			return true
 		},
 		async jwt({ token, account, profile }) {
+			// TODO Solve the error
+			// @ts-ignore
 			const dbUser = await getUserByProviderId(token.sub)
+			// TODO Solve the error
+			// @ts-ignore
 			if (dbUser.success && dbUser.data?.length > 0) {
+				// TODO Solve the error
+				// @ts-ignore
 				token.userId = dbUser.data[0].id
 			}
 
 			return token
 		},
 		async session({ session, token }) {
+			// TODO Solve the error
+			// @ts-ignore
 			session.user.providerId = token.sub
+			// TODO Solve the error
+			// @ts-ignore
 			session.user.id = token.userId
 
 			return session

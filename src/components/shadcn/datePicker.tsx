@@ -14,7 +14,7 @@ import {
 } from '@/components/shadcn/popover'
 
 type DatePickerProps = {
-	value: Date
+	value: Date | undefined
 	handleOnSetDate: (value: Date | undefined) => void
 	classname: string
 }

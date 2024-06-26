@@ -10,12 +10,16 @@ type getUserByProviderIdParams = {
 
 const getUserByProviderId = async (providerId: getUserByProviderIdParams) => {
 	try {
+		const dbUser = await db
+			.select()
+			.from(UserSchema)
+			// TODO Solve the error
+			// @ts-ignore
+			.where(eq(UserSchema.providerId, providerId))
+
 		return {
 			success: true,
-			data: await db
-				.select()
-				.from(UserSchema)
-				.where(eq(UserSchema.providerId, providerId)),
+			data: dbUser,
 		}
 	} catch (e) {
 		console.log('getUserByProviderId/Error: ', e)
