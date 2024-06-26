@@ -6,6 +6,7 @@ import {
 	FormControl,
 	FormField,
 	FormItem,
+	FormLabel,
 	FormMessage,
 } from '@/components/shadcn/form'
 import { Input } from '@/components/shadcn/input'
@@ -17,10 +18,15 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from '@/components/shadcn/sheet'
+import TiptapEditor from '@/components/tiptap/editor'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Plus } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import StarterKit from '@tiptap/starter-kit'
+import { cx } from 'class-variance-authority'
+import { useEditor } from '@tiptap/react'
+import TiptapToolbar from '@/components/tiptap/toolbar'
 
 type CardSheetCreateParams = {
 	type: 'CREATE'
@@ -39,6 +45,16 @@ const CardFormSchema = z.object({
 type CardFormType = z.infer<typeof CardFormSchema>
 
 const CardSheet: React.FC<CardSheetParams> = ({ type }) => {
+	const editor = useEditor({
+		extensions: [StarterKit],
+		content: '<h1>Hello World! 🌎️</h1>',
+		editorProps: {
+			attributes: {
+				class: cx(''),
+			},
+		},
+	})
+
 	const methods = useForm<CardFormType>({
 		resolver: zodResolver(CardFormSchema),
 		defaultValues: {
@@ -71,12 +87,9 @@ const CardSheet: React.FC<CardSheetParams> = ({ type }) => {
 								name='name'
 								render={({ field }) => (
 									<FormItem>
+										<FormLabel>Card name</FormLabel>
 										<FormControl>
-											<Input
-												placeholder='Card name'
-												className='h-12'
-												{...field}
-											/>
+											<Input className='h-12' {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -87,8 +100,9 @@ const CardSheet: React.FC<CardSheetParams> = ({ type }) => {
 								name='dueTo'
 								render={({ field }) => (
 									<FormItem>
+										<FormLabel>Due to</FormLabel>
 										<FormControl>
-											<Input placeholder='Due to' className='h-12' {...field} />
+											<Input className='h-12' {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -99,19 +113,28 @@ const CardSheet: React.FC<CardSheetParams> = ({ type }) => {
 								name='assinedTo'
 								render={({ field }) => (
 									<FormItem>
+										<FormLabel>Assine to</FormLabel>
 										<FormControl>
-											<Input
-												placeholder='Assined to who?'
-												className='h-12'
-												{...field}
-											/>
+											<Input className='h-12' {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
 								)}
 							/>
 						</div>
-						<div className='h-full rounded border border-gray-500'></div>
+						<FormField
+							control={methods.control}
+							name='description'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Description</FormLabel>
+									<FormControl>
+										<TiptapEditor onChange={field.onChange} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 					</form>
 				</Form>
 			</SheetContent>
