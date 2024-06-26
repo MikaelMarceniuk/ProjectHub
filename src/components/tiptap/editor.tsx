@@ -7,9 +7,10 @@ import TiptapToolbar from './toolbar'
 
 type TiptapEditorProps = {
 	onChange: (value: string) => void
+	value: string
 }
 
-const TiptapEditor: React.FC<TiptapEditorProps> = ({ onChange }) => {
+const TiptapEditor: React.FC<TiptapEditorProps> = ({ value, onChange }) => {
 	const editor = useEditor({
 		extensions: [StarterKit],
 		editorProps: {
@@ -17,6 +18,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({ onChange }) => {
 				class: cx('rounded border border-input h-full min-h-64 p-2'),
 			},
 		},
+		content: value,
 		onUpdate({ editor }) {
 			onChange(editor.getHTML())
 		},

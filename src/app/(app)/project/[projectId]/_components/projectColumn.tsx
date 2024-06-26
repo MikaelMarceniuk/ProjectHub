@@ -4,6 +4,7 @@ import ColumnType from '@/@types/column'
 import CardSheet from './cardSheet'
 import { useQuery } from '@tanstack/react-query'
 import getCardsByColumnId from '@/api/getCardsByColumnId'
+import { Card, CardHeader, CardTitle } from '@/components/shadcn/card'
 
 const ProjectColumn: React.FC<ColumnType> = ({ id, name }) => {
 	const { data, isFetching } = useQuery({
@@ -19,11 +20,27 @@ const ProjectColumn: React.FC<ColumnType> = ({ id, name }) => {
 				</div>
 				<CardSheet type='CREATE' columnId={id} />
 			</div>
-			<li>
+			<li className='mt-4 space-y-2'>
 				{/* TODO Create Skeleton and error card */}
 
 				{data?.success &&
-					data.data?.map((card) => <div key={card.id}>{card.name}</div>)}
+					data.data?.map((c) => (
+						<CardSheet
+							key={c.id}
+							type='UPDATE'
+							columnId={c.columnId}
+							cardId={c.id}
+							trigger={
+								<Card>
+									<CardHeader>
+										<CardTitle className='cursor-pointer text-left font-normal hover:font-bold'>
+											{c.name}
+										</CardTitle>
+									</CardHeader>
+								</Card>
+							}
+						/>
+					))}
 			</li>
 		</ul>
 	)

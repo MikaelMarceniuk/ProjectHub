@@ -23,21 +23,25 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Plus } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import StarterKit from '@tiptap/starter-kit'
-import { cx } from 'class-variance-authority'
-import { useEditor } from '@tiptap/react'
-import TiptapToolbar from '@/components/tiptap/toolbar'
-import { Popover, PopoverTrigger } from '@/components/shadcn/popover'
 import DatePicker from '@/components/shadcn/datePicker'
-import { useMutation } from '@tanstack/react-query'
-import createCardApi from '@/api/createCardMutation'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import getCardById from '@/api/getCardById'
+import createCardApi from '@/api/createCard'
+import updateCardApi from '@/api/updateCard'
 
 type CardSheetCreateParams = {
 	type: 'CREATE'
 	columnId: string
 }
 
-type CardSheetParams = CardSheetCreateParams
+type CardSheetUpdateParams = {
+	type: 'UPDATE'
+	columnId: string
+	cardId: string
+	trigger: React.ReactElement
+}
+
+type CardSheetParams = CardSheetCreateParams | CardSheetUpdateParams
 
 const CardFormSchema = z.object({
 	name: z.string().min(6),
@@ -48,7 +52,12 @@ const CardFormSchema = z.object({
 
 type CardFormType = z.infer<typeof CardFormSchema>
 
-const CardSheet: React.FC<CardSheetParams> = ({ type, columnId }) => {
+const CardSheet: React.FC<CardSheetParams> = ({
+	type,
+	columnId,
+	cardId,
+	trigger,
+}) => {
 	const methods = useForm<CardFormType>({
 		resolver: zodResolver(CardFormSchema),
 		defaultValues: {
@@ -59,32 +68,69 @@ const CardSheet: React.FC<CardSheetParams> = ({ type, columnId }) => {
 		},
 	})
 
-	const createCardMutation = useMutation({
+	const createCardMutatino = useMutation({
 		mutationFn: createCardApi,
 		onSuccess(_data, _variables, _context) {
 			methods.reset()
 		},
 	})
 
-	const handleSubmit = methods.handleSubmit(
-		async (values) =>
-			await createCardMutation.mutateAsync({
+	const updateCardMutation = useMutation({
+		mutationFn: updateCardApi,
+		onSuccess(_data, _variables, _context) {
+			console.log('_data: ', _data)
+		},
+	})
+
+	const getCardQuery = useQuery({
+		queryKey: ['card', { cardId }],
+		queryFn: () => getCardById({ cardId }),
+	})
+
+	const handleSubmit = methods.handleSubmit(async (values) => {
+		if (type == 'CREATE') {
+			await createCardMutatino.mutateAsync({
 				name: values.name,
 				description: values.description,
 				dueTo: values.dueTo,
 				columnId,
-			}),
-	)
+			})
+		}
+
+		if (type == 'UPDATE') {
+			await updateCardMutation.mutateAsync({
+				id: cardId,
+				name: values.name,
+				description: values.description,
+				dueTo: values.dueTo,
+				columnId,
+			})
+		}
+	})
+
+	const handleOnOpen = () => {
+		if (type == 'CREATE') return
+
+		if (getCardQuery.data && getCardQuery.data.success) {
+			const { data } = getCardQuery.data
+			methods.setValue('name', data!.name)
+			methods.setValue('dueTo', data!.dueTo ? new Date(data!.dueTo) : undefined)
+			methods.setValue('description', data!.description || '')
+		}
+	}
 
 	return (
-		<Sheet>
-			<SheetTrigger asChild>
-				{type == 'CREATE' && (
+		<Sheet onOpenChange={handleOnOpen}>
+			{type == 'CREATE' && (
+				<SheetTrigger asChild>
 					<Button size='icon' variant='ghost'>
 						<Plus />
 					</Button>
-				)}
-			</SheetTrigger>
+				</SheetTrigger>
+			)}
+			{type == 'UPDATE' && (
+				<SheetTrigger className='w-full'>{trigger}</SheetTrigger>
+			)}
 			<SheetContent className='w-full max-w-[80vw] sm:max-w-[80vw]'>
 				<SheetHeader>
 					<SheetTitle>{type == 'CREATE' && 'Create a new card'}</SheetTitle>
@@ -144,7 +190,10 @@ const CardSheet: React.FC<CardSheetParams> = ({ type, columnId }) => {
 								<FormItem>
 									<FormLabel>Description</FormLabel>
 									<FormControl>
-										<TiptapEditor onChange={field.onChange} />
+										<TiptapEditor
+											onChange={field.onChange}
+											value={field.value}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -152,7 +201,7 @@ const CardSheet: React.FC<CardSheetParams> = ({ type, columnId }) => {
 						/>
 						<div className='flex justify-end'>
 							<Button type='submit' size='xlg'>
-								Create
+								{type == 'CREATE' ? 'Create' : 'Save'}
 							</Button>
 						</div>
 					</form>

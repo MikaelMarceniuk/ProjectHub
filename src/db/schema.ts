@@ -29,14 +29,18 @@ export const ProjectSchema = pgTable('project', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	name: varchar('username').notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
-	ownerId: uuid('owner_id').references(() => UserSchema.id),
+	ownerId: uuid('owner_id')
+		.references(() => UserSchema.id)
+		.notNull(),
 })
 
 export const ColumnSchema = pgTable('column', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	name: varchar('name').notNull(),
 	order: integer('order').notNull(),
-	projectId: uuid('project_id').references(() => ProjectSchema.id),
+	projectId: uuid('project_id')
+		.references(() => ProjectSchema.id)
+		.notNull(),
 })
 
 export const CardSchema = pgTable('card', {
@@ -44,5 +48,7 @@ export const CardSchema = pgTable('card', {
 	name: varchar('name').notNull(),
 	description: text('description'),
 	dueTo: date('dueTo'),
-	columnId: uuid('column_id').references(() => ColumnSchema.id),
+	columnId: uuid('column_id')
+		.references(() => ColumnSchema.id)
+		.notNull(),
 })

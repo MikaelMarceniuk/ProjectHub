@@ -1,4 +1,5 @@
 type CardType = {
+	id: string
 	name: string
 	dueTo: Date | undefined
 	description: string
