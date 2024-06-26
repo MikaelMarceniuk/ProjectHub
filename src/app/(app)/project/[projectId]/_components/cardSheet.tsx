@@ -29,6 +29,8 @@ import { useEditor } from '@tiptap/react'
 import TiptapToolbar from '@/components/tiptap/toolbar'
 import { Popover, PopoverTrigger } from '@/components/shadcn/popover'
 import DatePicker from '@/components/shadcn/datePicker'
+import { useMutation } from '@tanstack/react-query'
+import createCardApi from '@/api/createCardMutation'
 
 type CardSheetCreateParams = {
 	type: 'CREATE'
@@ -39,33 +41,40 @@ type CardSheetParams = CardSheetCreateParams
 
 const CardFormSchema = z.object({
 	name: z.string().min(6),
-	description: z.string().min(0),
-	dueTo: z.date(),
+	description: z.string().min(0).trim(),
+	dueTo: z.date().optional(),
 	assinedTo: z.string(),
 })
 
 type CardFormType = z.infer<typeof CardFormSchema>
 
-const CardSheet: React.FC<CardSheetParams> = ({ type }) => {
-	const editor = useEditor({
-		extensions: [StarterKit],
-		content: '<h1>Hello World! 🌎️</h1>',
-		editorProps: {
-			attributes: {
-				class: cx(''),
-			},
-		},
-	})
-
+const CardSheet: React.FC<CardSheetParams> = ({ type, columnId }) => {
 	const methods = useForm<CardFormType>({
 		resolver: zodResolver(CardFormSchema),
 		defaultValues: {
 			name: '',
 			description: '',
-			dueTo: '',
+			dueTo: undefined,
 			assinedTo: '',
 		},
 	})
+
+	const createCardMutation = useMutation({
+		mutationFn: createCardApi,
+		onSuccess(_data, _variables, _context) {
+			methods.reset()
+		},
+	})
+
+	const handleSubmit = methods.handleSubmit(
+		async (values) =>
+			await createCardMutation.mutateAsync({
+				name: values.name,
+				description: values.description,
+				dueTo: values.dueTo,
+				columnId,
+			}),
+	)
 
 	return (
 		<Sheet>
@@ -82,7 +91,7 @@ const CardSheet: React.FC<CardSheetParams> = ({ type }) => {
 					<SheetDescription></SheetDescription>
 				</SheetHeader>
 				<Form {...methods}>
-					<form className='h-full space-y-4'>
+					<form className='h-full space-y-4' onSubmit={handleSubmit}>
 						<div className='flex w-full gap-4'>
 							<FormField
 								control={methods.control}
@@ -141,6 +150,11 @@ const CardSheet: React.FC<CardSheetParams> = ({ type }) => {
 								</FormItem>
 							)}
 						/>
+						<div className='flex justify-end'>
+							<Button type='submit' size='xlg'>
+								Create
+							</Button>
+						</div>
 					</form>
 				</Form>
 			</SheetContent>

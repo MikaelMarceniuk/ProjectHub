@@ -30,7 +30,7 @@ const ProjectPage: NextPage<ProjectPageType> = async ({ params }) => {
 							<div>
 								<span className='text-lg font-bold uppercase'>{c.name}</span>
 							</div>
-							<CardSheet type='CREATE' />
+							<CardSheet type='CREATE' columnId={c.id} />
 						</div>
 						<li></li>
 					</ul>

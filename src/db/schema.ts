@@ -5,6 +5,8 @@ import {
 	uniqueIndex,
 	uuid,
 	integer,
+	text,
+	date,
 } from 'drizzle-orm/pg-core'
 
 export const UserSchema = pgTable(
@@ -35,4 +37,12 @@ export const ColumnSchema = pgTable('column', {
 	name: varchar('name').notNull(),
 	order: integer('order').notNull(),
 	projectId: uuid('project_id').references(() => ProjectSchema.id),
+})
+
+export const CardSchema = pgTable('card', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	name: varchar('name').notNull(),
+	description: text('description'),
+	dueTo: date('dueTo'),
+	columnId: uuid('column_id').references(() => ColumnSchema.id),
 })
