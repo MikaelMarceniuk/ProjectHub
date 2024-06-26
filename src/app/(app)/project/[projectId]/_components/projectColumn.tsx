@@ -4,42 +4,35 @@ import ColumnType from '@/@types/column'
 import CardSheet from './cardSheet'
 import { useQuery } from '@tanstack/react-query'
 import getCardsByColumnId from '@/api/getCardsByColumnId'
-import { Card, CardHeader, CardTitle } from '@/components/shadcn/card'
+import TaskCard from './taskCard'
+import { useDroppable } from '@dnd-kit/core'
 
 const ProjectColumn: React.FC<ColumnType> = ({ id, name }) => {
-	const { data, isFetching } = useQuery({
+	const { setNodeRef } = useDroppable({
+		id: `column-${id}`,
+	})
+
+	const { data } = useQuery({
 		queryKey: ['column', { id }],
 		queryFn: () => getCardsByColumnId({ columnId: id }),
 	})
 
 	return (
-		<ul className='w-full'>
+		<ul className='w-full rounded border bg-black p-2' ref={setNodeRef}>
 			<div className='flex items-center justify-between'>
 				<div>
 					<span className='text-lg font-bold uppercase'>{name}</span>
 				</div>
 				<CardSheet type='CREATE' columnId={id} />
 			</div>
-			<li className='mt-4 space-y-2'>
+			<li className={'mt-4 space-y-2'}>
 				{/* TODO Create Skeleton and error card */}
 
 				{data?.success &&
-					data.data?.map((c) => (
-						<CardSheet
-							key={c.id}
-							type='UPDATE'
-							columnId={c.columnId}
-							cardId={c.id}
-							trigger={
-								<Card>
-									<CardHeader>
-										<CardTitle className='cursor-pointer text-left font-normal hover:font-bold'>
-											{c.name}
-										</CardTitle>
-									</CardHeader>
-								</Card>
-							}
-						/>
+					data.data!.map((c) => (
+						// TODO Solve this error
+						// @ts-ignore
+						<TaskCard key={c.id} {...c} />
 					))}
 			</li>
 		</ul>
