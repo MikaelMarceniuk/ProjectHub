@@ -27,7 +27,7 @@ export const UserSchema = pgTable(
 
 export const ProjectSchema = pgTable('project', {
 	id: uuid('id').primaryKey().defaultRandom(),
-	name: varchar('username').notNull(),
+	name: varchar('name').notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	ownerId: uuid('owner_id')
 		.references(() => UserSchema.id)

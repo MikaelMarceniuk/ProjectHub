@@ -1,7 +1,6 @@
-import { drizzle } from 'drizzle-orm/vercel-postgres'
-import { sql } from '@vercel/postgres'
-import * as schema from './schema'
+import { drizzle as drizzlePostgres } from 'drizzle-orm/postgres-js'
+import postgres from 'postgres'
 
-const db = drizzle(sql, { schema })
+const db = drizzlePostgres(postgres(process.env.POSTGRES_URL!))
 
 export default db
