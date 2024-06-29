@@ -1,5 +1,6 @@
 'use client'
 
+import ProjectType from '@/@types/project'
 import createProjectApi from '@/api/createProject'
 import { Button } from '@/components/shadcn/button'
 import {
@@ -22,7 +23,7 @@ import { Input } from '@/components/shadcn/input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -45,18 +46,20 @@ const CreateProject = () => {
 
 	const createProjectMutation = useMutation({
 		mutationFn: createProjectApi,
-		onSuccess({ isSuccess, data }, variables, context) {
-			if (!isSuccess) return
+		onSuccess({ isSuccess, data }) {
+			if (!isSuccess) {
+				// TODO Should send some error message
+				return
+			}
 
-			const projectsInCache = queryClient.getQueriesData({
-				queryKey: ['projects', { query: '' }],
+			const projectsInCache = queryClient.getQueriesData<ProjectType[]>({
+				queryKey: ['projects', ''],
 			})
-			if (projectsInCache.length == 0) return
 
 			const [cacheKey, cache] = projectsInCache[0]
-			// TODO Solve the error
-			// @ts-ignore
-			queryClient.setQueryData(cacheKey, [...cache, data[0]])
+			const newCache = cache ? [...cache, data] : [data]
+
+			queryClient.setQueryData(cacheKey, newCache)
 		},
 	})
 
