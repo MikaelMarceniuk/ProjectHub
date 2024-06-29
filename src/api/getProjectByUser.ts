@@ -1,12 +1,12 @@
 'use server'
 
 import db from '@/db'
-import { ProjectSchema, UserSchema } from '@/db/schema'
+import { ProjectSchema } from '@/db/schema'
 import { and, eq, like } from 'drizzle-orm'
 
 type getProjectByUserParams = {
 	userId: string
-	query: string
+	query: string | null
 }
 
 const getProjectByUser = async ({ userId, query }: getProjectByUserParams) => {
@@ -24,13 +24,13 @@ const getProjectByUser = async ({ userId, query }: getProjectByUserParams) => {
 			)
 
 		return {
-			success: true,
+			isSuccess: true,
 			data: dbResp,
 		}
 	} catch (e) {
 		console.log('getProjectByUser/Error: ', e)
 		return {
-			success: false,
+			isSuccess: false,
 			message: 'Error in creating user.',
 		}
 	}

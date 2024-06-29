@@ -21,18 +21,21 @@ const ProjectsList: React.FC = () => {
 	const { data: session } = useSession()
 
 	const { isFetching, data } = useQuery({
-		queryKey: ['projects', { query: searchParams.get('query') }],
-		queryFn: async () =>
-			await (
-				await getProjectByUser({
-					// TODO Solve the error
-					// @ts-ignore
-					userId: session?.user.id,
-					// TODO Solve the error
-					// @ts-ignore
-					query: searchParams.get('query'),
-				})
-			).data,
+		queryKey: ['projects', searchParams.get('query')],
+		queryFn: async () => {
+			const apiResp = await getProjectByUser({
+				// TODO Solve the error
+				// @ts-ignore
+				userId: session?.user.id,
+				query: searchParams.get('query'),
+			})
+
+			if (apiResp.isSuccess) {
+				return apiResp.data
+			}
+
+			return Promise.reject()
+		},
 	})
 
 	// TODO Create Skeleton and debounce for fetching
