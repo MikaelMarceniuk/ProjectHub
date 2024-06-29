@@ -14,7 +14,14 @@ const ProjectColumn: React.FC<ColumnType> = ({ id, name }) => {
 
 	const { data } = useQuery({
 		queryKey: ['column', { id }],
-		queryFn: () => getCardsByColumnId({ columnId: id }),
+		queryFn: async () => {
+			const apiResp = await getCardsByColumnId({ columnId: id })
+
+			if (apiResp.isSuccess) return apiResp.data
+
+			// TODO Send a message error
+			return Promise.reject()
+		},
 	})
 
 	return (
@@ -28,8 +35,8 @@ const ProjectColumn: React.FC<ColumnType> = ({ id, name }) => {
 			<li className={'mt-4 space-y-2'}>
 				{/* TODO Create Skeleton and error card */}
 
-				{data?.success &&
-					data.data!.map((c) => (
+				{data &&
+					data.map((c) => (
 						// TODO Solve this error
 						// @ts-ignore
 						<TaskCard key={c.id} {...c} />

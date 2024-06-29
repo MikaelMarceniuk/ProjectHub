@@ -16,13 +16,13 @@ const getCardsByColumnId = async ({ columnId }: getCardsByColumnIdParams) => {
 			.where(eq(CardSchema.columnId, columnId))
 
 		return {
-			success: true,
+			isSuccess: true,
 			data: dbCards,
 		}
 	} catch (e) {
 		console.log('getCardsByColumnId/Error: ', e)
 		return {
-			success: false,
+			isSuccess: false,
 			message: 'Error in getting cards.',
 		}
 	}

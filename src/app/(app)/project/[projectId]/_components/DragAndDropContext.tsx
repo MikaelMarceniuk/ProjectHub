@@ -1,13 +1,48 @@
 'use client'
 
+import CardType from '@/@types/card'
 import withChildren from '@/@types/withChildren'
 import updateCardColumnId from '@/api/updateCardColumnId'
 import { DndContext } from '@dnd-kit/core'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 const DragAndDropContext: React.FC<withChildren> = ({ children }) => {
+	const queryClient = useQueryClient()
+
 	const moveCardMutation = useMutation({
 		mutationFn: updateCardColumnId,
+		onSuccess({ isSuccess, data }, { cardId, columnId }) {
+			if (!isSuccess) {
+				// TODO Improve error handling
+				return
+			}
+			const columnsInCache = queryClient.getQueriesData<CardType[]>({
+				queryKey: ['column'],
+			})
+
+			// Removes the card from old column
+			columnsInCache.forEach((column) => {
+				const [cacheKey, cache] = column
+				if (!cache) return cache
+
+				const cardIndex = cache.findIndex((card) => card.id == cardId)
+				if (cardIndex != -1) {
+					const newCache = [...cache]
+					newCache.splice(cardIndex, 1)
+					queryClient.setQueryData(cacheKey, newCache)
+				}
+			})
+
+			// Updates the card in new column
+			const newColumnCache = queryClient.getQueriesData<CardType[]>({
+				queryKey: ['column', { id: columnId }],
+			})
+
+			const [cacheKey, cache] = newColumnCache[0]
+			const newCache = cache ? [...cache, data] : [data]
+
+			queryClient.setQueryData(cacheKey, newCache)
+		},
 	})
 
 	const handleDragEnd = async (event: any) => {

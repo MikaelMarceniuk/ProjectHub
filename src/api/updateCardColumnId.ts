@@ -14,15 +14,17 @@ const updateCardColumnId = async ({
 	columnId,
 }: UpdateCardColumnIdParams) => {
 	try {
-		await db
+		const [updatedCard] = await db
 			.update(CardSchema)
 			.set({
 				columnId,
 			})
 			.where(eq(CardSchema.id, cardId))
+			.returning()
 
 		return {
 			isSuccess: true,
+			data: updatedCard,
 		}
 	} catch (e) {
 		console.log('UpdateCardColumnId/Error: ', e)

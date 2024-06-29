@@ -24,10 +24,11 @@ import { Plus } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import DatePicker from '@/components/shadcn/datePicker'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import getCardById from '@/api/getCardById'
 import createCardApi from '@/api/createCard'
 import updateCardApi from '@/api/updateCard'
+import CardType from '@/@types/card'
 
 type CardSheetCreateParams = {
 	type: 'CREATE'
@@ -62,6 +63,8 @@ const CardSheet: React.FC<CardSheetParams> = ({
 	// @ts-ignore
 	trigger,
 }) => {
+	const queryClient = useQueryClient()
+
 	const methods = useForm<CardFormType>({
 		resolver: zodResolver(CardFormSchema),
 		defaultValues: {
@@ -74,8 +77,18 @@ const CardSheet: React.FC<CardSheetParams> = ({
 
 	const createCardMutatino = useMutation({
 		mutationFn: createCardApi,
-		onSuccess(_data, _variables, _context) {
+		onSuccess({ data }, { columnId }) {
+			// TODO Fix description not clearing
 			methods.reset()
+
+			const cardsInCache = queryClient.getQueriesData<CardType[]>({
+				queryKey: ['column', { id: columnId }],
+			})
+
+			const [cacheKey, cache] = cardsInCache[0]
+			const newCache = cache ? [...cache, data] : [data]
+
+			queryClient.setQueryData(cacheKey, newCache)
 		},
 	})
 
@@ -89,6 +102,7 @@ const CardSheet: React.FC<CardSheetParams> = ({
 	const getCardQuery = useQuery({
 		queryKey: ['card', { cardId }],
 		queryFn: () => getCardById({ cardId }),
+		enabled: !!cardId,
 	})
 
 	const handleSubmit = methods.handleSubmit(async (values) => {
@@ -133,7 +147,9 @@ const CardSheet: React.FC<CardSheetParams> = ({
 				</SheetTrigger>
 			)}
 			{type == 'UPDATE' && (
-				<SheetTrigger className='w-full'>{trigger}</SheetTrigger>
+				<SheetTrigger asChild className='w-full'>
+					{trigger}
+				</SheetTrigger>
 			)}
 			<SheetContent className='w-full max-w-[80vw] sm:max-w-[80vw]'>
 				<SheetHeader>
