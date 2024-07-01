@@ -5,9 +5,9 @@ import Footer from '@/components/footer'
 
 const AppLayout: NextPage<withChildren> = ({ children }) => {
 	return (
-		<div className='flex min-h-screen flex-col'>
+		<div className='flex flex-col'>
 			<Header />
-			<main className='h-page-children-wrapper'>{children}</main>
+			<main className='h-[calc(100vh-64px)]'>{children}</main>
 			<Footer />
 		</div>
 	)

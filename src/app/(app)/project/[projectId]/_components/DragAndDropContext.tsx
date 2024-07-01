@@ -48,6 +48,8 @@ const DragAndDropContext: React.FC<withChildren> = ({ children }) => {
 	const handleDragEnd = async (event: any) => {
 		const { active, over } = event
 
+		if (!over.id) return
+
 		const cardId = active.id.split('task-')[1]
 		const columnId = over.id.split('column-')[1]
 

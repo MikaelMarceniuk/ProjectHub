@@ -17,21 +17,21 @@ const ProjectPage: NextPage<ProjectPageType> = async ({ params }) => {
 	if (!apiProject.success) redirect('/dashboard?error=projectnotfound')
 
 	return (
-		<>
-			<div className='flex items-center justify-between border-b border-b-gray-500 px-8 py-4'>
+		<div>
+			<div className='flex h-16 items-center justify-between border-b border-b-gray-500 px-8 py-4'>
 				<span>{apiProject.data?.project.name}</span>
 				<Button size='icon' variant='ghost'>
 					<Settings />
 				</Button>
 			</div>
-			<div className='flex flex-1 gap-14 p-8'>
+			<div className='flex h-[calc(100%-64px)] gap-14 p-8'>
 				<DragAndDropContext>
 					{apiProject.data?.project.columns.map((c) => (
 						<ProjectColumn key={c.id} {...c} />
 					))}
 				</DragAndDropContext>
 			</div>
-		</>
+		</div>
 	)
 }
 
