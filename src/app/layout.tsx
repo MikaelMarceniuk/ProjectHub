@@ -27,7 +27,6 @@ const RootLayout: NextPage<RootLayoutProps> = ({ children }) => {
 					disableTransitionOnChange
 				>
 					<SessionProvider>
-						<SessionObserver />
 						<QueryClientProvider>{children}</QueryClientProvider>
 					</SessionProvider>
 				</ThemeProvider>
