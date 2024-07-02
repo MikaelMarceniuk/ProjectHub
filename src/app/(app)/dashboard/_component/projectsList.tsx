@@ -36,6 +36,7 @@ const ProjectsList: React.FC = () => {
 
 			return Promise.reject()
 		},
+		enabled: !!session,
 	})
 
 	// TODO Create Skeleton and debounce for fetching
