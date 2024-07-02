@@ -13,6 +13,7 @@ import {
 } from '@/components/shadcn/dropdown-menu'
 import { Avatar, AvatarImage } from '@/components/shadcn/avatar'
 import { useRouter } from 'next/navigation'
+import { Skeleton } from '@/components/shadcn/skeleton'
 
 const Header: React.FC = () => {
 	const router = useRouter()
@@ -23,8 +24,18 @@ const Header: React.FC = () => {
 		router.replace('/login')
 	}
 
-	// TODO Create Skeleton
-	if (status != 'authenticated') return null
+	if (status != 'authenticated') {
+		return (
+			<div className='flex h-16 items-center justify-between px-8'>
+				<Skeleton className='h-6 w-32' />
+
+				<div className='flex gap-2'>
+					<Skeleton className='h-10 w-10 rounded-full' />
+					<Skeleton className='h-10 w-10 rounded-full' />
+				</div>
+			</div>
+		)
+	}
 
 	return (
 		<DefaultHeader>
