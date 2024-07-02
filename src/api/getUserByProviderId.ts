@@ -2,13 +2,25 @@
 
 import db from '@/db'
 import { UserSchema } from '@/db/schema'
-import { eq } from 'drizzle-orm'
+import { InferSelectModel, eq } from 'drizzle-orm'
 
-type getUserByProviderIdParams = {
-	providerId: string
+type getUserByProviderIdSuccessResp = {
+	isSuccess: true
+	data: InferSelectModel<typeof UserSchema> | null
 }
 
-const getUserByProviderId = async (providerId: getUserByProviderIdParams) => {
+type getUserByProviderIdErrorResp = {
+	isSuccess: false
+	message: string
+}
+
+type getUserByProviderIdResp =
+	| getUserByProviderIdSuccessResp
+	| getUserByProviderIdErrorResp
+
+const getUserByProviderId = async (
+	providerId: string,
+): Promise<getUserByProviderIdResp> => {
 	try {
 		const dbUser = await db
 			.select()
@@ -18,13 +30,13 @@ const getUserByProviderId = async (providerId: getUserByProviderIdParams) => {
 			.where(eq(UserSchema.providerId, providerId))
 
 		return {
-			success: true,
-			data: dbUser,
+			isSuccess: true,
+			data: dbUser[0] || null,
 		}
 	} catch (e) {
 		console.log('getUserByProviderId/Error: ', e)
 		return {
-			success: false,
+			isSuccess: false,
 			message: 'Error in creating user.',
 		}
 	}

@@ -13,11 +13,18 @@ type CreateUserApiParams = {
 
 const createUserApi = async (newUser: CreateUserApiParams) => {
 	try {
-		await db.insert(UserSchema).values(newUser)
-		return true
+		const createdUser = await db.insert(UserSchema).values(newUser).returning()
+
+		return {
+			isSuccess: true,
+			data: createdUser,
+		}
 	} catch (e) {
 		console.log('CreateUserApi/Error: ', e)
-		return false
+		return {
+			isSuccess: false,
+			message: 'Error in creating user.',
+		}
 	}
 }
 

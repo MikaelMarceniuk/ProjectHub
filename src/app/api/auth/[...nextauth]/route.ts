@@ -23,44 +23,38 @@ const handler = NextAuth({
 	},
 	callbacks: {
 		async signIn({ user, account }) {
-			// TODO Solve the error
-			// @ts-ignore
-			const dbUser = await getUserByProviderId(account?.providerAccountId)
+			if (account) {
+				const apiResp = await getUserByProviderId(account.providerAccountId)
 
-			if (!dbUser.success) return false
-			if (dbUser.data?.length == 1) return true
+				if (!apiResp.isSuccess) return false
+				if (apiResp.data) return true
 
-			await createUserApi({
-				username: user.name!,
-				email: user.email!,
-				image: user.image!,
-				providerId: account?.providerAccountId!,
-				providerName: account?.provider!,
-			})
+				const userCreated = await createUserApi({
+					username: user.name!,
+					email: user.email!,
+					image: user.image!,
+					providerId: account.providerAccountId,
+					providerName: account.provider,
+				})
 
-			return true
+				return userCreated.isSuccess
+			}
+
+			return false
 		},
 		async jwt({ token, account, profile }) {
-			// TODO Solve the error
-			// @ts-ignore
-			const dbUser = await getUserByProviderId(token.sub)
-			// TODO Solve the error
-			// @ts-ignore
-			if (dbUser.success && dbUser.data?.length > 0) {
-				// TODO Solve the error
-				// @ts-ignore
-				token.userId = dbUser.data[0].id
+			if (token.sub) {
+				const apiResp = await getUserByProviderId(token.sub)
+				if (apiResp.isSuccess && apiResp.data) {
+					token.userId = apiResp.data.id
+				}
 			}
 
 			return token
 		},
 		async session({ session, token }) {
-			// TODO Solve the error
-			// @ts-ignore
-			session.user.providerId = token.sub
-			// TODO Solve the error
-			// @ts-ignore
 			session.user.id = token.userId
+			session.user.providerId = token.sub
 
 			return session
 		},
