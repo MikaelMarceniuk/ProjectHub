@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm'
 import {
 	pgTable,
 	varchar,
@@ -22,6 +23,7 @@ export const UserSchema = pgTable(
 	},
 	(user) => ({
 		uniqueIdx: uniqueIndex('uniqueIdx').on(user.providerId),
+		uniqueEmail: uniqueIndex('uniqueEmail').on(sql`lower(${user.email})`),
 	}),
 )
 
