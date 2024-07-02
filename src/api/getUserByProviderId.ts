@@ -25,8 +25,6 @@ const getUserByProviderId = async (
 		const dbUser = await db
 			.select()
 			.from(UserSchema)
-			// TODO Solve the error
-			// @ts-ignore
 			.where(eq(UserSchema.providerId, providerId))
 
 		return {
