@@ -11,7 +11,7 @@ import { useMultistepFormContext } from '@/providers/multiStepFormProvider'
 import { useFormContext } from 'react-hook-form'
 import { SignUpSchemaType } from '../page'
 import { Button } from '@/components/shadcn/button'
-import { ArrowLeft, Mail } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { z } from 'zod'
 
 const passwordSchema = z.object({
@@ -31,9 +31,8 @@ const PasswordForm: React.FC = () => {
 		if (!result.success) {
 			result.error.errors.forEach((error) => {
 				if (error.code == 'too_small') {
-					// TODO Solve this error
-					// @ts-ignorex
-					return form.setError(error.path[0], {
+					const inputKey = error.path[0] as keyof SignUpSchemaType
+					return form.setError(inputKey, {
 						message: 'Password must not be empty.',
 					})
 				}
