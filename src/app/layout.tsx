@@ -3,8 +3,8 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/providers/theme-provider'
 import SessionProvider from '@/providers/sessionProvider'
-import SessionObserver from '@/providers/sessionObserver'
 import QueryClientProvider from '@/providers/queryClientProvider'
+import { Toaster } from '@/components/shadcn/toaster'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -27,6 +27,7 @@ const RootLayout: NextPage<RootLayoutProps> = ({ children }) => {
 					disableTransitionOnChange
 				>
 					<SessionProvider>
+						<Toaster />
 						<QueryClientProvider>{children}</QueryClientProvider>
 					</SessionProvider>
 				</ThemeProvider>

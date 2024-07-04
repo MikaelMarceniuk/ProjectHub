@@ -3,18 +3,24 @@
 import CardType from '@/@types/card'
 import withChildren from '@/@types/withChildren'
 import updateCardColumnId from '@/api/updateCardColumnId'
+import { useToast } from '@/hooks/useToast'
 import { DndContext } from '@dnd-kit/core'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 const DragAndDropContext: React.FC<withChildren> = ({ children }) => {
 	const queryClient = useQueryClient()
+	const { toast } = useToast()
 
 	const moveCardMutation = useMutation({
 		mutationFn: updateCardColumnId,
 		onSuccess({ isSuccess, data }, { cardId, columnId }) {
 			if (!isSuccess) {
-				// TODO Improve error handling
-				return
+				toast({
+					title: 'Error in moving card.',
+					description: 'Check your connection and try again later.',
+					variant: 'destructive',
+				})
+				return Promise.reject()
 			}
 			const columnsInCache = queryClient.getQueriesData<CardType[]>({
 				queryKey: ['column'],

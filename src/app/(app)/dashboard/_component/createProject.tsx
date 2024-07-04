@@ -20,6 +20,7 @@ import {
 	FormMessage,
 } from '@/components/shadcn/form'
 import { Input } from '@/components/shadcn/input'
+import { useToast } from '@/hooks/useToast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
@@ -36,6 +37,7 @@ type newProjectSchemaType = z.infer<typeof newProjectSchema>
 const CreateProject = () => {
 	const { data: session } = useSession()
 	const queryClient = useQueryClient()
+	const { toast } = useToast()
 
 	const newProjectForm = useForm<newProjectSchemaType>({
 		resolver: zodResolver(newProjectSchema),
@@ -48,8 +50,12 @@ const CreateProject = () => {
 		mutationFn: createProjectApi,
 		onSuccess({ isSuccess, data }) {
 			if (!isSuccess) {
-				// TODO Should send some error message
-				return
+				toast({
+					title: 'Error in creating project.',
+					description: 'Check your connection and try again later.',
+					variant: 'destructive',
+				})
+				return Promise.reject()
 			}
 
 			const projectsInCache = queryClient.getQueriesData<ProjectType[]>({
