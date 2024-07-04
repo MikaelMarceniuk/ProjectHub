@@ -9,25 +9,30 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/shadcn/dropdown-menu'
+import { Skeleton } from '@/components/shadcn/skeleton'
+import { generateRandomNumber } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { Ellipsis, Star } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
 import Avatar from 'react-avatar'
+import { useFormContext } from 'react-hook-form'
+import { searchFormType } from '../_providers/searchFormProvider'
+import { useDebounce } from '@uidotdev/usehooks'
 
 const ProjectsList: React.FC = () => {
-	const searchParams = useSearchParams()
 	const { data: session } = useSession()
+	const form = useFormContext<searchFormType>()
+
+	const query = form.watch('query')
+	const debounceQuery = useDebounce(query, 500)
 
 	const { isFetching, data } = useQuery({
-		queryKey: ['projects', searchParams.get('query')],
+		queryKey: ['projects', debounceQuery],
 		queryFn: async () => {
 			const apiResp = await getProjectByUser({
-				// TODO Solve the error
-				// @ts-ignore
 				userId: session?.user.id,
-				query: searchParams.get('query'),
+				query,
 			})
 
 			if (apiResp.isSuccess) {
@@ -39,10 +44,13 @@ const ProjectsList: React.FC = () => {
 		enabled: !!session,
 	})
 
-	// TODO Create Skeleton and debounce for fetching
-
 	return (
 		<ul className='mt-4 flex flex-wrap gap-4'>
+			{isFetching &&
+				Array.from({ length: generateRandomNumber(1, 8) }).map((_, i) => (
+					<Skeleton key={i} className='h-24 w-full max-w-80' />
+				))}
+
 			{!isFetching &&
 				data &&
 				data.map((project) => (
