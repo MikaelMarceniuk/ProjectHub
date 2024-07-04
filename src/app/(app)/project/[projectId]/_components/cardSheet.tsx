@@ -29,6 +29,7 @@ import getCardById from '@/api/getCardById'
 import createCardApi from '@/api/createCard'
 import updateCardApi from '@/api/updateCard'
 import CardType from '@/@types/card'
+import { useState } from 'react'
 
 type CardSheetCreateParams = {
 	type: 'CREATE'
@@ -64,6 +65,7 @@ const CardSheet: React.FC<CardSheetParams> = ({
 	trigger,
 }) => {
 	const queryClient = useQueryClient()
+	const [isSheetOpen, setIsSheetOpen] = useState(false)
 
 	const methods = useForm<CardFormType>({
 		resolver: zodResolver(CardFormSchema),
@@ -102,7 +104,7 @@ const CardSheet: React.FC<CardSheetParams> = ({
 	const getCardQuery = useQuery({
 		queryKey: ['card', { cardId }],
 		queryFn: () => getCardById({ cardId }),
-		enabled: !!cardId,
+		enabled: !!cardId && isSheetOpen,
 	})
 
 	const handleSubmit = methods.handleSubmit(async (values) => {
@@ -127,6 +129,8 @@ const CardSheet: React.FC<CardSheetParams> = ({
 	})
 
 	const handleOnOpen = () => {
+		setIsSheetOpen(true)
+
 		if (type == 'CREATE') return
 
 		if (getCardQuery.data && getCardQuery.data.success) {

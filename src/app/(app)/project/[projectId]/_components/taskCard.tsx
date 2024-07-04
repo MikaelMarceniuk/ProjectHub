@@ -2,17 +2,21 @@
 
 import { Card, CardHeader, CardTitle } from '@/components/shadcn/card'
 import CardSheet from './cardSheet'
-import CardType from '@/@types/card'
 import { useDraggable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 import { Button } from '@/components/shadcn/button'
 import { GripVerticalIcon } from 'lucide-react'
+import { InferSelectModel } from 'drizzle-orm'
+import { CardSchema } from '@/db/schema'
 
-const TaskCard: React.FC<CardType> = ({ id, columnId, name }) => {
-	const { attributes, listeners, setNodeRef, transform, isDragging } =
-		useDraggable({
-			id: `task-${id}`,
-		})
+const TaskCard: React.FC<InferSelectModel<typeof CardSchema>> = ({
+	id,
+	columnId,
+	name,
+}) => {
+	const { attributes, listeners, setNodeRef, transform } = useDraggable({
+		id: `task-${id}`,
+	})
 
 	const style = {
 		transform: CSS.Translate.toString(transform),
