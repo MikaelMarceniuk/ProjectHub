@@ -46,12 +46,11 @@ const Header: React.FC = () => {
 				<DropdownMenu>
 					<DropdownMenuTrigger>
 						<Avatar>
-							{/* TODO Solve this problem */}
-							<AvatarImage src={session.user?.image || ''} />
+							<AvatarImage src={session.user.image || ''} />
 						</Avatar>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
-						<DropdownMenuLabel>{session.user?.name}</DropdownMenuLabel>
+						<DropdownMenuLabel>{session.user.name}</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<Button
 							variant='destructiveExpandIcon'

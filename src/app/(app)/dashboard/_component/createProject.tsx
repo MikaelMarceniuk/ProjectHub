@@ -67,11 +67,8 @@ const CreateProject = () => {
 		if (newProjectForm.formState.isSubmitSuccessful) newProjectForm.reset()
 	}, [newProjectForm.formState.isSubmitSuccessful])
 
-	const handleCreateNewProject = async ({ name }: newProjectSchemaType) => {
-		// TODO Solve the error
-		// @ts-ignore
+	const handleCreateNewProject = async ({ name }: newProjectSchemaType) =>
 		await createProjectMutation.mutate({ name, userId: session?.user.id })
-	}
 
 	return (
 		<Dialog>
