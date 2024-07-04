@@ -28,7 +28,7 @@ const updateCardApi = async ({
 
 		return {
 			isSuccess: true,
-			data: [dbUpdatedCard],
+			data: dbUpdatedCard,
 		}
 	} catch (e) {
 		console.log('UpdateCardApi/Error: ', e)

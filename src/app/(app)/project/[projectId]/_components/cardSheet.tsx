@@ -29,11 +29,16 @@ import getCardById from '@/api/getCardById'
 import createCardApi from '@/api/createCard'
 import updateCardApi from '@/api/updateCard'
 import CardType from '@/@types/card'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
+import { ColumnDTOType } from '@/api/getProjectDetailsById'
+import { useToast } from '@/hooks/useToast'
 
 type CardSheetCreateParams = {
 	type: 'CREATE'
 	columnId: string
+	cardId?: undefined
+	trigger?: undefined
 }
 
 type CardSheetUpdateParams = {
@@ -57,15 +62,13 @@ type CardFormType = z.infer<typeof CardFormSchema>
 const CardSheet: React.FC<CardSheetParams> = ({
 	type,
 	columnId,
-	// TODO Solve the error
-	// @ts-ignore
 	cardId,
-	// TODO Solve the error
-	// @ts-ignore
 	trigger,
 }) => {
 	const queryClient = useQueryClient()
+	const { projectId } = useParams<{ projectId: string }>()
 	const [isSheetOpen, setIsSheetOpen] = useState(false)
+	const { toast } = useToast()
 
 	const methods = useForm<CardFormType>({
 		resolver: zodResolver(CardFormSchema),
@@ -80,15 +83,28 @@ const CardSheet: React.FC<CardSheetParams> = ({
 	const createCardMutatino = useMutation({
 		mutationFn: createCardApi,
 		onSuccess({ data }, { columnId }) {
-			// TODO Fix description not clearing
 			methods.reset()
 
-			const cardsInCache = queryClient.getQueriesData<CardType[]>({
-				queryKey: ['column', { id: columnId }],
+			const [cachedProject] = queryClient.getQueriesData<{
+				id: string
+				name: string
+				columns: ColumnDTOType
+			}>({
+				queryKey: ['project', projectId],
 			})
 
-			const [cacheKey, cache] = cardsInCache[0]
-			const newCache = cache ? [...cache, data] : [data]
+			const [cacheKey, cache] = cachedProject
+			const newCache = {
+				...cache,
+				columns: cache?.columns.map((column) => {
+					if (column.id != columnId) return column
+
+					return {
+						...column,
+						cards: [...column.cards, data],
+					}
+				}),
+			}
 
 			queryClient.setQueryData(cacheKey, newCache)
 		},
@@ -96,16 +112,62 @@ const CardSheet: React.FC<CardSheetParams> = ({
 
 	const updateCardMutation = useMutation({
 		mutationFn: updateCardApi,
-		onSuccess(_data, _variables, _context) {
-			console.log('_data: ', _data)
+		onSuccess({ isSuccess, data }, { id }, _context) {
+			if (!isSuccess) {
+				toast({
+					title: 'Error in updating card.',
+					description: 'Check your connection and try again later.',
+					variant: 'destructive',
+				})
+				return Promise.reject()
+			}
+
+			const [cachedProject] = queryClient.getQueriesData<{
+				id: string
+				name: string
+				columns: ColumnDTOType
+			}>({
+				queryKey: ['project', projectId],
+			})
+
+			const [cacheKey, cache] = cachedProject
+			const newCache = {
+				...cache,
+				columns: cache?.columns.map((column) => {
+					if (column.id != columnId) return column
+
+					return {
+						...column,
+						cards: column.cards.map((card) => {
+							if (card.id != id) return card
+
+							return {
+								...card,
+								...data,
+							}
+						}),
+					}
+				}),
+			}
+
+			queryClient.setQueryData(cacheKey, newCache)
 		},
 	})
 
 	const getCardQuery = useQuery({
 		queryKey: ['card', { cardId }],
-		queryFn: () => getCardById({ cardId }),
-		enabled: !!cardId && isSheetOpen,
+		queryFn: () => getCardById({ cardId: cardId! }),
+		enabled: isSheetOpen,
 	})
+
+	useEffect(() => {
+		if (getCardQuery.data) {
+			const { data } = getCardQuery.data
+			methods.setValue('name', data!.name)
+			methods.setValue('dueTo', data!.dueTo ? new Date(data!.dueTo) : undefined)
+			methods.setValue('description', data!.description || '')
+		}
+	}, [getCardQuery.data])
 
 	const handleSubmit = methods.handleSubmit(async (values) => {
 		if (type == 'CREATE') {
@@ -129,16 +191,10 @@ const CardSheet: React.FC<CardSheetParams> = ({
 	})
 
 	const handleOnOpen = () => {
-		setIsSheetOpen(true)
+		setIsSheetOpen((oldValue) => !oldValue)
 
 		if (type == 'CREATE') return
-
-		if (getCardQuery.data && getCardQuery.data.success) {
-			const { data } = getCardQuery.data
-			methods.setValue('name', data!.name)
-			methods.setValue('dueTo', data!.dueTo ? new Date(data!.dueTo) : undefined)
-			methods.setValue('description', data!.description || '')
-		}
+		if (!isSheetOpen) getCardQuery.refetch()
 	}
 
 	return (

@@ -4,6 +4,7 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { cx } from 'class-variance-authority'
 import TiptapToolbar from './toolbar'
+import { useEffect } from 'react'
 
 type TiptapEditorProps = {
 	onChange: (value: string) => void
@@ -23,6 +24,10 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({ value, onChange }) => {
 			onChange(editor.getHTML())
 		},
 	})
+
+	useEffect(() => {
+		if (value == '') editor?.commands.clearContent()
+	}, [value])
 
 	if (!editor) return null
 
