@@ -1,6 +1,16 @@
 import { type Editor } from '@tiptap/react'
 import { Toggle } from '../shadcn/toggle'
-import { Bold, Italic, Strikethrough } from 'lucide-react'
+import {
+	Baseline,
+	Bold,
+	Italic,
+	Strikethrough,
+	Type,
+	Underline,
+} from 'lucide-react'
+import { Button } from '../shadcn/button'
+import { Popover, PopoverContent, PopoverTrigger } from '../shadcn/popover'
+import { GradientPicker } from '../shadcn/colorPicker'
 
 type TiptapToolbar = {
 	editor: Editor
@@ -27,11 +37,65 @@ const TiptapToolbar: React.FC<TiptapToolbar> = ({ editor }) => {
 			</Toggle>
 			<Toggle
 				size='sm'
+				pressed={editor.isActive('underline')}
+				onPressedChange={() => editor.chain().focus().toggleUnderline().run()}
+			>
+				<Underline className='h-4 w-4' />
+			</Toggle>
+			<Toggle
+				size='sm'
 				pressed={editor.isActive('strike')}
 				onPressedChange={() => editor.chain().focus().toggleStrike().run()}
 			>
 				<Strikethrough className='h-4 w-4' />
 			</Toggle>
+
+			<Popover>
+				<PopoverTrigger asChild>
+					<Button variant='ghost' size='tiptapToolbar'>
+						<Type className='h-4 w-4' />
+					</Button>
+				</PopoverTrigger>
+				<PopoverContent className='w-fit p-2'>
+					<div className='flex flex-col gap-2'>
+						<Button
+							variant='ghost'
+							className='justify-start'
+							onClick={() => editor.chain().focus().setFontSize('12px').run()}
+						>
+							Tiny
+						</Button>
+						<Button
+							variant='ghost'
+							className='justify-start'
+							onClick={() => editor.chain().focus().setFontSize('14px').run()}
+						>
+							Small
+						</Button>
+						<Button
+							variant='ghost'
+							className='justify-start'
+							onClick={() => editor.chain().focus().setFontSize('16px').run()}
+						>
+							Default
+						</Button>
+						<Button
+							variant='ghost'
+							className='justify-start'
+							onClick={() => editor.chain().focus().setFontSize('18px').run()}
+						>
+							Big
+						</Button>
+						<Button
+							variant='ghost'
+							className='justify-start'
+							onClick={() => editor.chain().focus().setFontSize('20px').run()}
+						>
+							Huge
+						</Button>
+					</div>
+				</PopoverContent>
+			</Popover>
 		</div>
 	)
 }

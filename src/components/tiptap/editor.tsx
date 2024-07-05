@@ -2,6 +2,9 @@
 
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import Underline from '@tiptap/extension-underline'
+import TextStyle from '@tiptap/extension-text-style'
+import FontSize from 'tiptap-extension-font-size'
 import { cx } from 'class-variance-authority'
 import TiptapToolbar from './toolbar'
 import { useEffect } from 'react'
@@ -13,7 +16,7 @@ type TiptapEditorProps = {
 
 const TiptapEditor: React.FC<TiptapEditorProps> = ({ value, onChange }) => {
 	const editor = useEditor({
-		extensions: [StarterKit],
+		extensions: [StarterKit, Underline, TextStyle, FontSize],
 		editorProps: {
 			attributes: {
 				class: cx('rounded border border-input h-full min-h-64 p-2'),
